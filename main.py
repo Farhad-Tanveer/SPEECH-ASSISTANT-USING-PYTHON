@@ -1,29 +1,29 @@
 import subprocess
-
 import winshell as winshell
 import wolframalpha
-import pyttsx3
-import tkinter
 import json
-import random
-import operator
-import speech_recognition as sr
 import datetime
-import wikipedia
-import webbrowser
 import os
-import pyjokes
+from gtts import gTTS  # google text to speech
 import smtplib
 import ctypes
 import time
 import requests
 import shutil
 
+
+
+
+import speech_recognition as sr # recognise speech
+from time import ctime  # get time details
+import pyttsx3 #conversion of text to speech in a program it works offline.
+import wikipedia
+import webbrowser  # open browser
+import pyjokes  #python jokes over the internet
+import pywhatkit as Kit
+
 from dask.diagnostics import progress
-from twilio.rest import Client
 from ecapture import ecapture as ec
-from bs4 import BeautifulSoup
-import win32com.client as wincl
 from urllib.request import urlopen
 
 engine = pyttsx3.init('sapi5')
@@ -87,18 +87,6 @@ def takeCommand():
 
     return query
 
-
-def sendEmail(to, content):
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.ehlo()
-    server.starttls()
-
-    # Enable low security in gmail
-    server.login('your email id', 'your email password')
-    server.sendmail('your email id', to, content)
-    server.close()
-
-
 if __name__ == '__main__':
     clear = lambda: os.system('cls')
 
@@ -126,61 +114,61 @@ if __name__ == '__main__':
 
         elif 'open youtube' in query:
             speak("Here you go to Youtube\n")
-            webbrowser.open("youtube.com")
+            url = f"https://youtube.com"
+            webbrowser.get().open(url)
 
         elif 'open google' in query:
             speak("Here you go to Google\n")
-            webbrowser.open("google.com")
+            url = f"https://google.com"
+            webbrowser.get().open(url)
 
         elif 'open stackoverflow' in query:
             speak("Here you go to Stack Over flow.Happy coding")
-            webbrowser.open("stackoverflow.com")
+            url = f"https://stackoverflow.com"
+            webbrowser.get().open(url)
+        elif "what time is it" in query:
+            time = ctime().split(" ")[3].split(":")[0:2]
+            if time[0] == "00":
+                hours = '12'
+            else:
+                hours = time[0]
+            minutes = time[1]
+            time = f'{hours} {minutes}'
+            speak(time)
 
-        elif 'play music' in query or "play song" in query:
-            speak("Here you go with music")
-            # music_dir = "G:\\Song"
-            music_dir = "C:\\Users\\GAURAV\\Music"
-            songs = os.listdir(music_dir)
-            print(songs)
-            random = os.startfile(os.path.join(music_dir, songs[1]))
-
-        elif 'the time' in query:
-            strTime = datetime.datetime.now().strftime("% H:% M:% S")
-            speak(f"Sir, the time is {strTime}")
-
-        elif 'open opera' in query:
-            codePath = r"C:\\Users\\GAURAV\\AppData\\Local\\Programs\\Opera\\launcher.exe"
-            os.startfile(codePath)
-
-        elif 'email to gaurav' in query:
-            try:
-                speak("What should I say?")
-                content = takeCommand()
-                to = "Receiver email address"
-                sendEmail(to, content)
-                speak("Email has been sent !")
-            except Exception as e:
-                print(e)
-                speak("I am not able to send this email")
-
-        elif 'send a mail' in query:
-            try:
-                speak("What should I say?")
-                content = takeCommand()
-                speak("whome should i send")
-                to = input()
-                sendEmail(to, content)
-                speak("Email has been sent !")
-            except Exception as e:
-                print(e)
-                speak("I am not able to send this email")
 
         elif 'how are you' in query:
             speak("I am fine, Thank you")
             speak("How are you, Sir")
 
-        elif 'fine' in query or "good" in query:
+        elif 'I am fine' in query or "good" in query:
             speak("It's good to know that your fine")
+
+        elif 'tell me a joke' in query:
+            speak(pyjokes.get_joke())
+
+
+        elif "who are you" in query:
+            speak("I am your virtual assistant created by Muhammad")
+
+        elif 'reason for you' in query:
+            speak("I was created as a project by Mister Muhammad ")
+
+
+        elif 'play' in query:
+            song = query.replace('play', '')
+            speak('playing ' + song)
+            Kit.playonyt(song)
+
+        elif "where is" in query:
+            query = query.replace("where is", "")
+            location = query
+            speak("User asked to Locate")
+            #url = f"https://google.com"
+            speak(location)
+            webbrowser.get().open("https://www.google.nl / maps / place/" + location + "")
+
+
 
         elif "change my name to" in query:
             query = query.replace("change my name to", "")
@@ -201,7 +189,7 @@ if __name__ == '__main__':
             exit()
 
         elif "who made you" in query or "who created you" in query:
-            speak("I have been created by Gaurav.")
+            speak("I have been created by Tanveer.")
 
         elif 'joke' in query:
             speak(pyjokes.get_joke())
@@ -227,21 +215,15 @@ if __name__ == '__main__':
             speak("If you talk then definitely your human.")
 
         elif "why you came to world" in query:
-            speak("Thanks to Gaurav. further It's a secret")
+            speak("Thanks to Tanveer. further It's a secret")
 
-        elif 'power point presentation' in query:
+        elif 'open my presentation' in query:
             speak("opening Power Point presentation")
-            power = r"C:\\Users\\GAURAV\\Desktop\\Minor Project\\Presentation\\Voice Assistant.pptx"
+            power = r"E:\RheinWaal\system simulation\speech_assistant_project\voice-assistant-final-presentation.pptx"
             os.startfile(power)
 
         elif 'is love' in query:
             speak("It is 7th sense that destroy all other senses")
-
-        elif "who are you" in query:
-            speak("I am your virtual assistant created by Gaurav")
-
-        elif 'reason for you' in query:
-            speak("I was created as a Minor project by Mister Gaurav ")
 
         elif 'change background' in query:
             ctypes.windll.user32.SystemParametersInfoW(20,
@@ -293,12 +275,7 @@ if __name__ == '__main__':
             time.sleep(a)
             print(a)
 
-        elif "where is" in query:
-            query = query.replace("where is", "")
-            location = query
-            speak("User asked to Locate")
-            speak(location)
-            webbrowser.open("https://www.google.nl / maps / place/" + location + "")
+
 
         elif "camera" in query or "take a photo" in query:
             ec.capture(0, "Jarvis Camera ", "img.jpg")
